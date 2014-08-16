@@ -167,10 +167,11 @@ export default Ember.ArrayController.extend({
 
                     // Restart recognition on errors like no-speech timeout etc.
                     // Use a small timeout to prevent crashing Chrome.
-                    // TODO: restart only if data channel is still opened
-                    setTimeout(function () {
-                        recognition.start();
-                    }, 50);
+                    if (self.get('isDataChannelOpened')) {
+                        setTimeout(function () {
+                            recognition.start();
+                        }, 50);
+                    }
                 };
 
                 recognition.start();
@@ -209,9 +210,7 @@ export default Ember.ArrayController.extend({
                         break;
 
                     case 'language':
-                        var language = payload.language;
-
-                        self.set('remoteSpeechLanguage', language);
+                        self.set('remoteSpeechLanguage', payload.language);
                         break;
                 }
 
