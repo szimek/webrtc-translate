@@ -1,0 +1,72 @@
+html, body {
+  margin: 20px;
+}
+
+video {
+  width: 320px;
+  height: 200px;
+}
+
+.hidden {
+  display: none;
+}
+
+.status {
+  border-radius: 5px;
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+}
+
+.status.status-on {
+  background-color: green;
+}
+
+.status.status-off {
+  background-color: red;
+}
+
+.videos.remote-video-off {
+}
+
+.videos.remote-video-on #local-video {
+  position: absolute;
+  right: 99px;
+  bottom: 0;
+}
+
+.videos.remote-video-on #local-video video {
+  width: 80px;
+  height: 60px;
+}
+
+.message {
+  margin-bottom: 15px;
+}
+
+.message.local {
+  text-align: left;
+}
+
+.message.remote {
+  text-align: right;
+}
+
+.message .content-wrapper {
+  margin-top: 5px
+}
+
+.message .content {
+  padding: 3px 7px 3px 7px;
+  border-radius: 10px;
+}
+
+.message .original-content {
+  background-color: #D0D0D0;
+  color: black;
+}
+
+.message .translated-content {
+  background-color: #00A5FF;
+  color: white;
+}
