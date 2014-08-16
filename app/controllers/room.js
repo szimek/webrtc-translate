@@ -6,6 +6,7 @@ import Ember from 'ember';
 import Message from '../models/message';
 
 export default Ember.ArrayController.extend({
+    roomId: null,
     recognition: null,
     isRemoteVideo: false,
     isDataChannelOpened: false,
@@ -60,9 +61,15 @@ export default Ember.ArrayController.extend({
         }
     }.observes('localSpeechLanguage'),
 
-    init: function () {
-        this._super();
+    roomIdChanged: function () {
+        console.log(this.get('roomId'));
 
+        if (this.get('roomId')) {
+            this.setup();
+        }
+    }.observes('roomId'),
+
+    setup: function () {
         var self = this;
 
         var webrtc = new SimpleWebRTC({
@@ -72,7 +79,7 @@ export default Ember.ArrayController.extend({
         });
 
         webrtc.on('readyToCall', function () {
-            webrtc.joinRoom('local');
+            webrtc.joinRoom(self.get('roomId'));
         });
 
         webrtc.on('joinedRoom', function () {
@@ -109,13 +116,17 @@ export default Ember.ArrayController.extend({
                     console.info('recognition:start');
 
                     finalTranscript = '';
-                    self.set('message', Message.create());
-                    self.pushObject(self.get('message'));
                 };
 
                 recognition.onresult = function (event) {
                     var interimTranscript = '';
                     var message = self.get('message');
+
+                    if (!message) {
+                        message = Message.create();
+                        self.set('message', message);
+                        self.pushObject(message);
+                    }
 
                     console.log(event.results);
 
@@ -202,6 +213,10 @@ export default Ember.ArrayController.extend({
                         payload.ifFinal = true;
                         var message = Message.create(payload);
                         self.pushObject(message);
+
+                        var lang = self.get('localSpeechLanguage');
+
+                        console.log('Speaking with language: ', lang);
 
                         self.say({
                             text: message.get('translatedContent'),

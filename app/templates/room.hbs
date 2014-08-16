@@ -35,12 +35,12 @@
       <div {{bind-attr class=":message isRemote:remote:local"}}>
         <div class="content-wrapper">
           <span {{bind-attr class=":content :original-content originalContent:visible:hidden"}}>
-            {{this.formattedOriginalContent}}
+            {{{this.formattedOriginalContent}}}
           </span>
         </div>
         <div class="content-wrapper">
           <span {{bind-attr class=":content :translated-content translatedContent:visible:hidden"}}>
-            {{this.translatedContent}}
+            {{{this.translatedContent}}}
           </span>
         </div>
       </div>

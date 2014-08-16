@@ -70,3 +70,12 @@ video {
   background-color: #00A5FF;
   color: white;
 }
+
+.chat {
+  position: fixed;
+  overflow: auto;
+  top: 375px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}

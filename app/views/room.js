@@ -7,5 +7,11 @@ export default Ember.View.extend({
         webrtc.config.remoteVideosEl = "remote-video";
 
         webrtc.startLocalVideo();
-    }.on('didInsertElement')
+    }.observes('controller.webrtc'),
+
+    scrollToBottom: function () {
+        if (this.$()) {
+            this.$().scrollTop(this.$().prop('scrollHeight'));
+        }
+    }.observes('controller.content.length')
 });
