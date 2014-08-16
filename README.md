@@ -1,4 +1,4 @@
-# Webrtc-translate
+# WebRTC Translate
 
 This README outlines the details of collaborating on this Ember application.
 
@@ -10,7 +10,7 @@ This README outlines the details of collaborating on this Ember application.
 
 ## Running
 
-* `ember server`
+* `GOOGLE_TRANSLATE_API_KEY=XXXXXX ember server`
 * Visit your app at http://localhost:4200.
 
 ## Running Tests
