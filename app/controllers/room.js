@@ -154,7 +154,8 @@ export default Ember.ArrayController.extend({
                             q: message.get('formattedOriginalContent')
                         })
                         .done(function (data) {
-                            message.set('translatedContent', data);
+                            var translation = data.data.translations[0].translatedText;
+                            message.set('translatedContent', translation);
                             self.sendMessage(message);
 
                             finalTranscript = '';
@@ -233,7 +234,8 @@ export default Ember.ArrayController.extend({
     },
 
     translate: function (options) {
-        return jQuery.get('/api/translate', {
+        return jQuery.getJSON('https://www.googleapis.com/language/translate/v2?callback=?', {
+            key: window.WebrtcTranslateENV.GOOGLE_TRANSLATE_API_KEY,
             source: options.source,
             target: options.target,
             q:      options.q
