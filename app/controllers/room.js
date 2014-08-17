@@ -32,8 +32,7 @@ export default Ember.ArrayController.extend({
     }.property('remoteSpeechLanguage'),
 
     remoteFlagName: function () {
-        var name = this.get('remoteSpeechLanguage').split('-')[1].toUpperCase();
-        return  '/images/flags/' + name + '.png';
+        return this.get('remoteSpeechLanguage').split('-')[1].toUpperCase();
     }.property('remoteSpeechLanguage'),
 
     localSpeechLanguage: 'en-GB',
@@ -43,8 +42,7 @@ export default Ember.ArrayController.extend({
     }.property('localSpeechLanguage'),
 
     localFlagName: function () {
-        var name = this.get('localSpeechLanguage').split('-')[1].toUpperCase();
-        return  '/images/flags/' + name + '.png';
+        return this.get('localSpeechLanguage').split('-')[1].toUpperCase();
     }.property('localSpeechLanguage'),
 
     localSpeechLanguageChanged: function () {
@@ -157,12 +155,10 @@ export default Ember.ArrayController.extend({
                         })
                         .done(function (data) {
                             message.set('translatedContent', data);
-
                             self.sendMessage(message);
 
                             finalTranscript = '';
-                            self.set('message', Message.create());
-                            self.pushObject(self.get('message'));
+                            self.set('message', null);
                         });
                     }
                 };

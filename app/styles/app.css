@@ -79,3 +79,52 @@ video {
   left: 0;
   right: 0;
 }
+
+.flag {
+  height: 64px;
+  width: 64px;
+}
+
+.flag.GB {
+  background-image: url(/images/flags/GB.png);
+}
+
+.flag.US {
+  background-image: url(/images/flags/US.png);
+}
+
+.flag.DE {
+  background-image: url(/images/flags/DE.png);
+}
+
+.flag.FR {
+  background-image: url(/images/flags/FR.png);
+}
+
+.flag.IT {
+  background-image: url(/images/flags/IT.png);
+}
+
+.flag.HU {
+  background-image: url(/images/flags/HU.png);
+}
+
+.flag.NL {
+  background-image: url(/images/flags/NL.png);
+}
+
+.flag.PL {
+  background-image: url(/images/flags/PL.png);
+}
+
+.flag.PT {
+  background-image: url(/images/flags/PT.png);
+}
+
+.flag.SK {
+  background-image: url(/images/flags/SK.png);
+}
+
+.flag.SE {
+  background-image: url(/images/flags/SE.png);
+}

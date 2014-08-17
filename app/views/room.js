@@ -9,9 +9,11 @@ export default Ember.View.extend({
         webrtc.startLocalVideo();
     }.observes('controller.webrtc'),
 
-    scrollToBottom: function () {
-        if (this.$()) {
-            this.$().scrollTop(this.$().prop('scrollHeight'));
+    scrollChatToBottom: function () {
+        var chatElement = this.$('.chat');
+
+        if (chatElement) {
+            chatElement.scrollTop(chatElement.prop('scrollHeight'));
         }
-    }.observes('controller.content.length')
+    }.observes('controller.model.@each')
 });
