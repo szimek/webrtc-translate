@@ -97,6 +97,10 @@ video {
   background-image: url(/images/flags/DE.png);
 }
 
+.flag.ES {
+  background-image: url(/images/flags/ES.png);
+}
+
 .flag.FR {
   background-image: url(/images/flags/FR.png);
 }

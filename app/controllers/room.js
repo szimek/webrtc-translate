@@ -15,6 +15,7 @@ export default Ember.ArrayController.extend({
         'en-GB',
         'en-US',
         'de-DE',
+        'es-ES',
         'fr-FR',
         'it-IT',
         'hu-HU',
