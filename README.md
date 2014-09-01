@@ -1,6 +1,6 @@
 # WebRTC Translate
 
-This README outlines the details of collaborating on this Ember application.
+Highly experimental (read: "barely working") app that uses WebRTC API and WebSpeech API to provide almost (read: "not really") real-time translations during a video call. You'll need Google Translate API key to run it yourself.
 
 ## Installation
 
