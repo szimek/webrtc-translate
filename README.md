@@ -4,24 +4,47 @@ Highly experimental (read: "barely working") app that uses WebRTC API and WebSpe
 
 You can try it out at https://webrtc-translate.herokuapp.com/. It doesn't really work on a single computer, so you'll need a second one - just make sure that you open the same URL (e.g. `https://webrtc-translate.herokuapp.com/rooms/your-awesome-room-name`) on both.
 
+## Prerequisites
+
+You will need the following things properly installed on your computer.
+
+* [Git](http://git-scm.com/)
+* [Node.js](http://nodejs.org/) (with NPM) and [Bower](http://bower.io/)
+
 ## Installation
 
-* `git clone` this repository
+* `git clone <repository-url>` this repository
+* change into the new directory
 * `npm install`
 * `bower install`
 
-## Running
+## Running / Development
 
 * `GOOGLE_TRANSLATE_API_KEY=XXXXXX ember server`
 * Visit your app at http://localhost:4200.
 
-## Running Tests
+### Code Generators
+
+Make use of the many generators for code, try `ember help generate` for more details
+
+### Running Tests
 
 * `ember test`
 * `ember test --server`
 
-## Building
+### Building
 
-* `ember build`
+* `ember build` (development)
+* `ember build --environment production` (production)
 
-For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
+### Deploying
+
+Specify what it takes to deploy your app.
+
+## Further Reading / Useful Links
+
+* ember: http://emberjs.com/
+* ember-cli: http://www.ember-cli.com/
+* Development Browser Extensions
+  * [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
+  * [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
