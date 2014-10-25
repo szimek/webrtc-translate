@@ -1,5 +1,4 @@
 /* global SimpleWebRTC */
-/* global webkitSpeechRecognition */
 /* global jQuery */
 
 import Ember from 'ember';
@@ -73,7 +72,7 @@ export default Ember.ArrayController.extend({
 
         var webrtc = new SimpleWebRTC({
             enableDataChannels: true,
-            url: 'https://webrtc-translate-signalmaster.herokuapp.com/',
+            url: 'https://webrtc-translate-signalmaster.herokuapp.com:443',
             debug: false
         });
 
@@ -102,7 +101,9 @@ export default Ember.ArrayController.extend({
                 self.sendLanguage(self.get('localSpeechLanguage'));
 
                 // Setup speech recognition
-                var recognition = new webkitSpeechRecognition();
+                var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                var recognition = new SpeechRecognition();
+
                 recognition.continuous = true;
                 recognition.interimResults = true;
                 recognition.lang = self.get('localSpeechLanguage');
