@@ -7,9 +7,7 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <div class="container">
-      {{BASE_TAG}}
-    </div>
+    {{content-for 'head'}}
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
@@ -17,16 +15,11 @@
     <link rel="stylesheet" href="assets/webrtc-translate.css">
   </head>
   <body>
-    <script>
-      window.WebrtcTranslateENV = {{ENV}};
-      window.EmberENV = window.WebrtcTranslateENV.EmberENV;
-    </script>
+    {{content-for 'body'}}
+
     <script src="//simplewebrtc.com/latest.js"></script>
     <script src="assets/vendor.js"></script>
     <script src="assets/webrtc-translate.js"></script>
-    <script>
-      window.WebrtcTranslate = require('webrtc-translate/app')['default'].create(WebrtcTranslateENV.APP);
-    </script>
 
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
