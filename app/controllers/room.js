@@ -3,13 +3,19 @@
 
 import Ember from 'ember';
 import Message from '../models/message';
+import config from '../config/environment';
+
+var injection = Ember.computed.injection;
+var alias = Ember.computed.alias;
 
 export default Ember.ArrayController.extend({
     roomId: null,
-    recognition: null,
     isRemoteVideo: false,
     isDataChannelOpened: false,
-    isSpeechRecognitionActive: false,
+    recognition: injection('service:speech-recognition'),
+    isSpeechRecognitionActive: alias('recognition.isActive'),
+
+    // TODO: move to speech recognition service
     languages: [
         'en-GB',
         'en-US',
@@ -48,84 +54,73 @@ export default Ember.ArrayController.extend({
     localSpeechLanguageChanged: function () {
         var language = this.get('localSpeechLanguage');
 
-        // Send local speech language to the other peer
         this.sendLanguage(language);
-
-        // Update and restart speech recognition
-        var recognition = this.get('recognition');
-        if (recognition) {
-            recognition.lang = language;
-            recognition.stop();
-        }
+        this.set('recognition.language', language);
     }.observes('localSpeechLanguage'),
 
     roomIdChanged: function () {
-        console.log(this.get('roomId'));
+        console.log('Room ID: ', this.get('roomId'));
 
         if (this.get('roomId')) {
             this.setup();
         }
     }.observes('roomId'),
 
-    setup: function () {
-        var self = this;
+    init: function () {
+        this._super();
 
+        // Initialize WebRTC
         var webrtc = new SimpleWebRTC({
             enableDataChannels: true,
             url: 'https://webrtc-translate-signalmaster.herokuapp.com:443',
             debug: false
         });
+        this.set("webrtc", webrtc);
+    },
+
+    setup: function () {
+        var controller = this;
+        var webrtc = this.get('webrtc');
+        var recognition = this.get('recognition');
 
         webrtc.on('readyToCall', function () {
-            webrtc.joinRoom(self.get('roomId'));
+            webrtc.joinRoom(controller.get('roomId'));
         });
 
         webrtc.on('joinedRoom', function () {
         });
 
         webrtc.on('videoAdded', function () {
-            self.set('isRemoteVideo', true);
+            controller.set('isRemoteVideo', true);
         });
 
         webrtc.on('videoRemoved', function () {
-            self.set('isRemoteVideo', false);
+            controller.set('isRemoteVideo', false);
         });
 
         webrtc.on('channelOpen', function (channel) {
             // Data channel with label 'simplewebrtc' is opened by SimpleWebRTC by default
             if (channel.label === 'simplewebrtc') {
-                self.set('isDataChannelOpened', true);
+                controller.set('isDataChannelOpened', true);
                 console.info('Data channel opened.', arguments);
 
                 // Send local speech language to the other peer
-                self.sendLanguage(self.get('localSpeechLanguage'));
-
-                // Setup speech recognition
-                var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                var recognition = new SpeechRecognition();
-
-                recognition.continuous = true;
-                recognition.interimResults = true;
-                recognition.lang = self.get('localSpeechLanguage');
-                self.set('recognition', recognition);
+                controller.sendLanguage(controller.get('localSpeechLanguage'));
 
                 var finalTranscript;
 
-                recognition.onstart = function () {
-                    self.set('isSpeechRecognitionActive', true);
-                    console.info('recognition:start');
-
+                recognition.on('start', function () {
                     finalTranscript = '';
-                };
+                });
 
-                recognition.onresult = function (event) {
+                recognition.on('result', function (event) {
                     var interimTranscript = '';
-                    var message = self.get('message');
+                    var message = controller.get('message');
 
                     if (!message) {
                         message = Message.create();
-                        self.set('message', message);
-                        self.pushObject(message);
+                        controller.set('message', message);
+                        controller.pushObject(message);
                     }
 
                     console.log(event.results);
@@ -150,54 +145,38 @@ export default Ember.ArrayController.extend({
                             isFinal: true
                         });
 
-                        self.translate({
-                            source: self.get('localTranslationLanguage'),
-                            target: self.get('remoteTranslationLanguage'),
+                        controller.translate({
+                            source: controller.get('localTranslationLanguage'),
+                            target: controller.get('remoteTranslationLanguage'),
                             q: message.get('formattedOriginalContent')
                         })
                         .done(function (data) {
-                            var translation = data.data.translations[0].translatedText;
-                            message.set('translatedContent', translation);
-                            self.sendMessage(message);
+                            if (data.error) {
+                                console.error(data.error.message);
+                            } else {
+                                var translation = data.data.translations[0].translatedText;
+                                message.set('translatedContent', translation);
+                                controller.sendMessage(message);
+                            }
 
                             finalTranscript = '';
-                            self.set('message', null);
+                            controller.set('message', null);
                         });
                     }
-                };
-
-                recognition.onerror = function (event) {
-                    self.set('isSpeechRecognitionActive', false);
-                    console.info('recognition:error', event.error);
-                };
-
-                recognition.onend = function () {
-                    self.set('isSpeechRecognitionActive', false);
-                    console.info('recognition:end');
-
-                    // Restart recognition on errors like no-speech timeout etc.
-                    // Use a small timeout to prevent crashing Chrome.
-                    if (self.get('isDataChannelOpened')) {
-                        setTimeout(function () {
-                            recognition.start();
-                        }, 50);
-                    }
-                };
-
-                recognition.start();
+                });
             }
         });
 
         webrtc.on('channelClose', function (channel) {
             if (channel.label === 'simplewebrtc') {
-                self.set('isDataChannelOpened', false);
+                controller.set('isDataChannelOpened', false);
                 console.info('Data channel closed.', arguments);
             }
         });
 
         webrtc.on('channelError', function (channel) {
             if (channel.label === 'simplewebrtc') {
-                self.set('isDataChannelOpened', false);
+                controller.set('isDataChannelOpened', false);
                 console.info('Data channel error.', arguments);
             }
         });
@@ -211,33 +190,31 @@ export default Ember.ArrayController.extend({
                         payload.isRemote = true;
                         payload.ifFinal = true;
                         var message = Message.create(payload);
-                        self.pushObject(message);
+                        controller.pushObject(message);
 
-                        var lang = self.get('localSpeechLanguage');
+                        var lang = controller.get('localSpeechLanguage');
 
                         console.log('Speaking with language: ', lang);
 
-                        self.say({
+                        controller.say({
                             text: message.get('translatedContent'),
-                            lang: self.get('localSpeechLanguage')
+                            lang: controller.get('localSpeechLanguage')
                         });
                         break;
 
                     case 'language':
-                        self.set('remoteSpeechLanguage', payload.language);
+                        controller.set('remoteSpeechLanguage', payload.language);
                         break;
                 }
 
                 console.log('Got message: ', data);
             }
         });
-
-        this.webrtc = webrtc;
     },
 
     translate: function (options) {
         return jQuery.getJSON('https://www.googleapis.com/language/translate/v2?callback=?', {
-            key: window.WebrtcTranslateENV.GOOGLE_TRANSLATE_API_KEY,
+            key: config.GOOGLE_TRANSLATE_API_KEY,
             source: options.source,
             target: options.target,
             q:      options.q

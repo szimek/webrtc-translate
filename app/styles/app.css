@@ -2,6 +2,10 @@ html, body {
   margin: 20px;
 }
 
+[data-ember-action] {
+  cursor: pointer;
+}
+
 video {
   width: 320px;
   height: 200px;
@@ -78,6 +82,10 @@ video {
   bottom: 0;
   left: 0;
   right: 0;
+}
+
+.speech-recognition-button > div {
+  margin: auto;
 }
 
 .flag {
