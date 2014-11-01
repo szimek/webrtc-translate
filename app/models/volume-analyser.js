@@ -35,8 +35,11 @@ export default Ember.Object.extend({
             var dataArray = new Uint8Array(bufferLength);
             analyser.getByteTimeDomainData(dataArray);
 
+            // Return volume in range 0..64
             var volume = Math.max.apply(null, dataArray) - 128;
-            return Math.max(volume, 0); // Clip lower bound at 0
+            volume = Math.max(volume, 0);
+            volume = Math.min(volume, 64);
+            return volume;
         } else {
             return null;
         }

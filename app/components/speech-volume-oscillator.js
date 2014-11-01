@@ -32,7 +32,7 @@ export default Ember.Component.extend({
         var time = this.get('time');
         var offset = canvas.height / 2;
         var volume = this.get('volumeAnalyser.volume');
-        var amplitude = Math.max(volume / 5, 1.1);
+        var amplitude = Math.max(volume / 2, 1.1);
 
         function f(x) {
             var xprime = x + speed * time;

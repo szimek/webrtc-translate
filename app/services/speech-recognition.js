@@ -22,8 +22,17 @@ export default Ember.Object.extend(Ember.Evented, {
         };
 
         recognition.onresult = function (event) {
-          self.trigger("result", event);
-          console.info('recognition:result', event);
+            self.trigger("result", event);
+
+            // Stop recognition once there's final result
+            var results = event.results;
+            if (results.length) {
+                if (results[0].isFinal) {
+                    recognition.abort();
+                }
+            }
+
+            console.info('recognition:result', event);
         };
 
         recognition.onend = function (event) {
