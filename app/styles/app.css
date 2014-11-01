@@ -15,6 +15,15 @@ video {
   display: none;
 }
 
+.center {
+  display: block;
+  margin: auto;
+}
+
+.circle {
+  border-radius: 50%;
+}
+
 .status {
   border-radius: 5px;
   width: 10px;
@@ -84,13 +93,18 @@ video {
   right: 0;
 }
 
-.speech-recognition-button > div {
+.speech-recognition-button {
   margin: auto;
 }
 
 .flag {
   height: 64px;
   width: 64px;
+}
+
+.flag.circle {
+  background-size: 150%;
+  background-position: -16px;
 }
 
 .flag.GB {

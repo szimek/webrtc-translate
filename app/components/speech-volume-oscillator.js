@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import VolumeAnalyser from '../models/volume-analyser';
 
 // var injection = Ember.computed.injection;
 var alias = Ember.computed.alias;
@@ -12,41 +13,16 @@ export default Ember.Component.extend({
 
         this.setProperties({
             time: 0,
-            wavelength: 4,
-            speed: 2
+            wavelength: 6,
+            speed: 2,
+            volumeAnalyser: VolumeAnalyser.create()
         });
     },
 
     onStreamChange: function () {
-        var stream   = this.get('stream');
-        if (stream) {
-            var AudioContext = window.AudioContext || window.webkitAudioContext;
-            var context = new AudioContext();
-            var analyser = context.createAnalyser();
-            // TODO check what these exactly do
-            // analyser.minDecibels = -90;
-            // analyser.maxDecibels = -10;
-            // analyser.smoothingTimeConstant = 0.85;
-            analyser.fftSize = 128;
-
-            var source = context.createMediaStreamSource(stream);
-            source.connect(analyser);
-
-            this.set('analyser', analyser);
-            this.set('bufferLength', analyser.fftSize);
-        } else {
-        }
+        var stream = this.get('stream');
+        this.get('volumeAnalyser').set('stream', stream);
     }.observes('stream'),
-
-    getVolume: function () {
-        var analyser = this.get('analyser');
-        var bufferLength = this.get('bufferLength');
-        var dataArray = new Uint8Array(bufferLength);
-        analyser.getByteTimeDomainData(dataArray);
-
-        var volume = Math.max.apply(null, dataArray) - 128;
-        return Math.max(volume, 0); // Clip lower bound at 0
-    },
 
     draw: function () {
         var canvas = this.$('canvas').get(0);
@@ -55,7 +31,8 @@ export default Ember.Component.extend({
         var wavelength = this.get('wavelength');
         var time = this.get('time');
         var offset = canvas.height / 2;
-        var amplitude = Math.max(this.getVolume() / 5, 1.1);
+        var volume = this.get('volumeAnalyser.volume');
+        var amplitude = Math.max(volume / 5, 1.1);
 
         function f(x) {
             var xprime = x + speed * time;
@@ -63,7 +40,7 @@ export default Ember.Component.extend({
         }
 
         // Clear
-        ctx.fillStyle = "rgb(255, 255 ,255)";
+        ctx.fillStyle = "rgb(15, 15 ,15)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         ctx.beginPath();
@@ -71,6 +48,8 @@ export default Ember.Component.extend({
         for (var x = 1; x < canvas.width; x++) {
           ctx.lineTo(x, f(x));
         }
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "rgb(68, 133, 247)";
         ctx.stroke();
 
         this.set('time', time + 1);
