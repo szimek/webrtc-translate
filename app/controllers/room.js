@@ -69,13 +69,26 @@ export default Ember.ArrayController.extend({
     init: function () {
         this._super();
 
+        var controller = this;
+
         // Initialize WebRTC
         var webrtc = new SimpleWebRTC({
             enableDataChannels: true,
             url: 'https://webrtc-translate-signalmaster.herokuapp.com:443',
             debug: false
         });
-        this.set("webrtc", webrtc);
+
+        webrtc.webrtc.on('localStream', function (stream) {
+            console.log('localStream: ', stream);
+            controller.set('localMediaStream', stream);
+        });
+
+        webrtc.webrtc.on('localStreamStopped', function () {
+            console.log('localStreamStopped');
+            controller.set('localMediaStream', null);
+        });
+
+        this.set('webrtc', webrtc);
     },
 
     setup: function () {

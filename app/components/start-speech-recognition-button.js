@@ -13,6 +13,15 @@ export default Ember.Component.extend({
         return this.get('language').split('-')[1].toUpperCase();
     }.property('language'),
 
+    // TODO: make flag a separate component and toggle its
+    // 'isVisible' property instead.
+    onIsSpeechRecognitionActiveChange: function () {
+        var isActive = this.get('isSpeechRecognitionActive');
+        var startButton = this.$('.flag');
+
+        return isActive ? startButton.hide() : startButton.show();
+    }.observes('isSpeechRecognitionActive'),
+
     actions: {
         // TODO: Wait for local video to be on
         toggleRecognition: function () {
@@ -25,8 +34,4 @@ export default Ember.Component.extend({
             }
         }
     }
-
-    // TODO:
-    // - figure out how to pass events to rooms controller
-    // - hook it up to webaudio to calculate gain and display sine wave
 });
