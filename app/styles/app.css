@@ -39,9 +39,6 @@ video {
   background-color: red;
 }
 
-.videos.remote-video-off {
-}
-
 .videos.remote-video-on #local-video {
   position: absolute;
   right: 99px;
