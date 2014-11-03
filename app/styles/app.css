@@ -95,6 +95,7 @@ video {
 
 .speech-recognition-button {
   margin: auto;
+  width: 64px;
 }
 
 .flag {
