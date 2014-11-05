@@ -7,8 +7,8 @@ html, body {
 }
 
 video {
-  width: 320px;
-  height: 200px;
+  width: 400px;
+  height: auto;
 }
 
 .hidden {
@@ -39,18 +39,23 @@ video {
   background-color: red;
 }
 
+.videos {
+  display: inline-block;
+  position: relative;
+}
+
 .videos.remote-video-off {
 }
 
 .videos.remote-video-on #local-video {
   position: absolute;
-  right: 99px;
+  right: 0;
   bottom: 0;
 }
 
 .videos.remote-video-on #local-video video {
   width: 80px;
-  height: 60px;
+  height: auto;
 }
 
 .message {
