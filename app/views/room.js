@@ -12,8 +12,12 @@ export default Ember.View.extend({
     scrollChatToBottom: function () {
         var chatElement = this.$('.chat');
 
+        // Wait till the view is updated
         if (chatElement) {
-            chatElement.scrollTop(chatElement.prop('scrollHeight'));
+            Ember.run.schedule('afterRender', function () {
+                chatElement.scrollTop(chatElement.prop('scrollHeight'));
+            });
         }
+
     }.observes('controller.model.@each')
 });
