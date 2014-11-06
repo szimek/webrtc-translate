@@ -1,5 +1,9 @@
-html, body {
+body {
   margin: 20px;
+}
+
+.container {
+  max-width: 960px;
 }
 
 [data-ember-action] {
@@ -7,8 +11,8 @@ html, body {
 }
 
 video {
-  width: 320px;
-  height: 200px;
+  width: 100%;
+  height: auto;
 }
 
 .hidden {
@@ -22,6 +26,11 @@ video {
 
 .circle {
   border-radius: 50%;
+}
+
+.language {
+  display: inline-block;
+  width: 140px;
 }
 
 .status {
@@ -39,22 +48,24 @@ video {
   background-color: red;
 }
 
-.videos.remote-video-off {
+.videos {
+  position: relative;
+  max-width: 360px;
+  margin: auto;
 }
 
-.videos.remote-video-on #local-video {
+
+#remote-video {
   position: absolute;
-  right: 99px;
   bottom: 0;
-}
-
-.videos.remote-video-on #local-video video {
+  right: 0;
   width: 80px;
-  height: 60px;
 }
 
 .message {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px dotted #f4f4f4;
 }
 
 .message.local {
@@ -84,22 +95,20 @@ video {
   color: white;
 }
 
-.chat {
-  position: fixed;
-  overflow: auto;
-  top: 375px;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
 
 .speech-recognition-button {
   margin: auto;
 }
 
+.chat {
+  max-width: 740px;
+  margin: 20px auto 0;
+}
+
 .flag {
   height: 64px;
   width: 64px;
+  margin: 0 auto;
 }
 
 .flag.circle {
