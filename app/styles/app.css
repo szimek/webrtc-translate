@@ -3,7 +3,7 @@ body {
 }
 
 .container {
-  max-width: 960px;
+  max-width: 640px;
 }
 
 [data-ember-action] {
@@ -95,15 +95,17 @@ video {
   color: white;
 }
 
-
 .speech-recognition-button {
   margin: auto;
   width: 64px;
 }
 
 .chat {
-  max-width: 740px;
+  max-width: 640px;
+  max-height: 300px;
   margin: 20px auto 0;
+  padding: 0 70px;
+  overflow-y: scroll;
 }
 
 .flag {

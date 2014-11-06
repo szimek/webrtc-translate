@@ -1,23 +1,21 @@
 <div class="row">
-  <div class="col-sm-4 text-center">
+  <div class="col-sm-3 text-center">
     <div class="language">
-      Data channel: <div {{bind-attr class=":status isDataChannelOpened:status-on:status-off"}}></div>
       <div class="language-select">
         {{view Ember.Select content=languages value=localSpeechLanguage}}
         <div {{bind-attr class=":flag localFlagName"}}></div>
       </div>
     </div>
   </div>
-  <div class="col-sm-4 text-center">
+  <div class="col-sm-6 text-center">
     <div {{bind-attr class=":videos isRemoteVideo:remote-video-on:remote-video-off"}}>
       <div id="local-video"></div>
       <div id="remote-video"></div>
     </div>
     {{start-speech-recognition-button language=localSpeechLanguage stream=localMediaStream}}
   </div>
-  <div class="col-sm-4 text-center">
+  <div class="col-sm-3 text-center">
     <div class="language">
-      Voice recognition: <div {{bind-attr class=":status isSpeechRecognitionActive:status-on:status-off"}}></div>
       <div>
         {{remoteSpeechLanguage}}
         <div {{bind-attr class=":flag remoteFlagName"}}></div>
