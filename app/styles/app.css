@@ -48,6 +48,7 @@ video {
   background-color: red;
 }
 
+<<<<<<< HEAD
 .videos {
   position: relative;
   max-width: 360px;
@@ -98,6 +99,7 @@ video {
 
 .speech-recognition-button {
   margin: auto;
+  width: 64px;
 }
 
 .chat {

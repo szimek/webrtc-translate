@@ -11,7 +11,7 @@ export default Ember.Object.extend(Ember.Evented, {
         var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         var recognition = new SpeechRecognition();
 
-        recognition.continuous = true;
+        recognition.continuous = false;
         recognition.interimResults = true;
         recognition.lang = this.get("language");
 
