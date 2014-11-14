@@ -88,7 +88,7 @@ export default Ember.View.extend({
 
         tour.addStep('step-5', {
             title: "That's it!",
-            text: "<p>Send address of this page to another person to get started!</p>",
+            text: "<p>Send address of this page to another person to get started.</p>",
             buttons: [{
                 text: 'Back',
                 action: tour.back
