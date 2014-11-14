@@ -19,4 +19,7 @@ var app = new EmberApp();
 
 app.import("bower_components/ember-computed-injection/ember-computed-injection.js");
 
+app.import("bower_components/shepherd.js/css/shepherd-theme-arrows.css");
+app.import("bower_components/shepherd.js/shepherd.js");
+
 module.exports = app.toTree();

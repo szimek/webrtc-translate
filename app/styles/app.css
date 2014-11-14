@@ -166,3 +166,17 @@ video {
 .flag.SE {
   background-image: url(/images/flags/SE.png);
 }
+
+.shepherd-element.shepherd-theme-arrows.shepherd-element-aint-no-river-wide-enough {
+  max-width: 600px;
+}
+
+.shepherd-element.shepherd-theme-arrows.shepherd-has-title .shepherd-content header {
+  background: none;
+  padding-bottom: 0;
+}
+
+.shepherd-element.shepherd-theme-arrows.shepherd-has-title .shepherd-content header h3 {
+  font-weight: bold;
+  font-size: 20px;
+}

@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-sm-3 text-center">
-    <div class="language">
+    <div class="language language-local">
       <div class="language-select">
         {{view Ember.Select content=languages value=localSpeechLanguage}}
         <div {{bind-attr class=":flag localFlagName"}}></div>
@@ -15,7 +15,7 @@
     {{start-speech-recognition-button language=localSpeechLanguage stream=localMediaStream}}
   </div>
   <div class="col-sm-3 text-center">
-    <div class="language">
+    <div class="language language-remote">
       <div>
         {{remoteSpeechLanguage}}
         <div {{bind-attr class=":flag remoteFlagName"}}></div>
