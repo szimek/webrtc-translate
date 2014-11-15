@@ -72,7 +72,7 @@ export default Ember.View.extend({
         });
 
         tour.addStep('step-4', {
-            text: "<p>Once the other person connects, click here to start speech recognition. It will stop automatically when you stop speaking.</p><p>When doing it for the first time, you'll need to allow mic access.</p>",
+            text: "<p><b>After the other person connects</b>, click here to start speech recognition. It will stop automatically when you stop speaking.</p><p>When doing it for the first time, you'll need to allow mic access.</p>",
             attachTo: {
                 element: '.speech-recognition-button',
                 on: 'bottom'
