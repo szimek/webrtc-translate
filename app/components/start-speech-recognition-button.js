@@ -1,12 +1,12 @@
 import Ember from 'ember';
 
-var injection = Ember.computed.injection;
+var inject = Ember.computed.injection;
 var alias = Ember.computed.alias;
 
 export default Ember.Component.extend({
     classNames: ['speech-recognition-button'],
 
-    recognition: injection('service:speech-recognition'),
+    recognition: inject('service:speech-recognition'),
     isSpeechRecognitionActive: alias('recognition.isActive'),
 
     flagName: function () {
