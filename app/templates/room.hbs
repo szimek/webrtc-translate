@@ -2,7 +2,7 @@
   <div class="col-sm-3 text-center">
     <div class="language language-local">
       <div class="language-select">
-        {{view Ember.Select content=languages value=localSpeechLanguage}}
+        {{view "select" content=languages value=localSpeechLanguage}}
         <div {{bind-attr class=":flag localFlagName"}}></div>
       </div>
     </div>
