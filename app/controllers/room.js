@@ -120,30 +120,31 @@ export default Ember.ArrayController.extend({
                 // Send local speech language to the other peer
                 controller.sendLanguage(controller.get('localSpeechLanguage'));
 
-                var finalTranscript;
-
-                recognition.on('start', function () {
-                    finalTranscript = '';
-                });
+                // var finalTranscript;
+                //
+                // recognition.on('start', function () {
+                //     finalTranscript = '';
+                // });
 
                 recognition.on('result', function (event) {
                     var interimTranscript = '';
+                    var finalTranscript = '';
                     var message = controller.get('message');
 
+                    // Create an empty message
                     if (!message) {
                         message = Message.create();
                         controller.set('message', message);
                         controller.pushObject(message);
                     }
 
-                    console.log(event.results);
-
                     for (var i = event.resultIndex; i < event.results.length; ++i) {
                         var result = event.results[i];
 
                         if (result.isFinal) {
-                            finalTranscript += result[0].transcript;
+                            finalTranscript = result[0].transcript;
                             console.log("Final: ", finalTranscript);
+                            break;
                         } else {
                             interimTranscript += result[0].transcript;
                             console.log("Interim: ", interimTranscript);
@@ -171,25 +172,34 @@ export default Ember.ArrayController.extend({
                                 message.set('translatedContent', translation);
                                 controller.sendMessage(message);
                             }
-
+                        })
+                        .always(function () {
                             finalTranscript = '';
                             controller.set('message', null);
                         });
                     }
+
+                    console.log(event.results);
                 });
             }
         });
 
         webrtc.on('channelClose', function (channel) {
             if (channel.label === 'simplewebrtc') {
+
+                // TODO: extract into function
                 controller.set('isDataChannelOpened', false);
+                recognition.off('result');
                 console.info('Data channel closed.', arguments);
             }
         });
 
         webrtc.on('channelError', function (channel) {
             if (channel.label === 'simplewebrtc') {
+
+                // TODO: extract into function
                 controller.set('isDataChannelOpened', false);
+                recognition.off('result');
                 console.info('Data channel error.', arguments);
             }
         });

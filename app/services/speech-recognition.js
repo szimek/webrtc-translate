@@ -16,12 +16,13 @@ export default Ember.Object.extend(Ember.Evented, {
         recognition.lang = this.get("language");
 
         recognition.onstart = function () {
+            console.info('recognition:start');
             self.set("isActive", true);
             self.trigger("start");
-            console.info('recognition:start');
         };
 
         recognition.onresult = function (event) {
+            console.info('recognition:result', event);
             self.trigger("result", event);
 
             // Stop recognition once there's final result
@@ -31,20 +32,18 @@ export default Ember.Object.extend(Ember.Evented, {
                     recognition.abort();
                 }
             }
-
-            console.info('recognition:result', event);
         };
 
         recognition.onend = function (event) {
+            console.info('recognition:end', event);
             self.set("isActive", false);
             self.trigger("end", event);
-            console.info('recognition:end', event);
         };
 
         recognition.onerror = function () {
+            console.info('recognition:error', event);
             self.set("isActive", false);
             self.trigger("error", event);
-            console.info('recognition:error', event);
         };
 
         this.set("recognition", recognition);
