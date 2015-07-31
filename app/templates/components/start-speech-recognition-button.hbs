@@ -1,4 +1,4 @@
 <div {{action "toggleRecognition"}}>
-  <div {{bind-attr class=":flag :circle :center flagName"}}></div>
+  <div class="flag circle center {{flagName}}"></div>
   {{speech-volume-oscillator stream=stream isSpeechRecognitionActive=isSpeechRecognitionActive}}
 </div>

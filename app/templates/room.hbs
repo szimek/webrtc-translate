@@ -2,13 +2,13 @@
   <div class="col-sm-3 text-center">
     <div class="language language-local">
       <div class="language-select">
-        {{view "select" content=languages value=localSpeechLanguage}}
-        <div {{bind-attr class=":flag localFlagName"}}></div>
+        {{language-select content=languages action=(action (mut localSpeechLanguage))}}
+        <div class="flag {{localFlagName}}"></div>
       </div>
     </div>
   </div>
   <div class="col-sm-6 text-center">
-    <div {{bind-attr class=":videos isRemoteVideo:remote-video-on:remote-video-off"}}>
+    <div class="videos {{if isRemoteVideo 'remote-video-on' 'remote-video-off'}}">
       <div id="local-video"></div>
       <div id="remote-video"></div>
     </div>
@@ -18,26 +18,25 @@
     <div class="language language-remote">
       <div>
         {{remoteSpeechLanguage}}
-        <div {{bind-attr class=":flag remoteFlagName"}}></div>
+        <div class="flag {{remoteFlagName}}"></div>
       </div>
     </div>
   </div>
 </div>
 
-
-<div class="chat">
-  {{#each}}
-    <div {{bind-attr class=":message isRemote:remote:local"}}>
+{{#message-list messages=model}}
+  {{#each messages as |message|}}
+    <div class="message {{if message.isRemote 'remote' 'local'}}">
       <div class="content-wrapper">
-        <span {{bind-attr class=":content :original-content originalContent:visible:hidden"}}>
-          {{{this.formattedOriginalContent}}}
+        <span class="content original-content {{if message.originalContent 'visible' 'hidden'}}">
+          {{{message.formattedOriginalContent}}}
         </span>
       </div>
       <div class="content-wrapper">
-        <span {{bind-attr class=":content :translated-content translatedContent:visible:hidden"}}>
-          {{{this.translatedContent}}}
+        <span class="content translated-content {{if message.translatedContent 'visible' 'hidden'}}">
+          {{{message.translatedContent}}}
         </span>
       </div>
     </div>
   {{/each}}
-</div>
+{{/message-list}}

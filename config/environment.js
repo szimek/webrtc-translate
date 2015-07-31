@@ -18,6 +18,17 @@ module.exports = function(environment) {
       // when it is created
     },
 
+    contentSecurityPolicy: {
+      'default-src': "'none'",
+      'script-src': "'self' 'unsafe-inline' simplewebrtc.com www.google-analytics.com",
+      'style-src': "'self' 'unsafe-inline' maxcdn.bootstrapcdn.com",
+      'font-src': "'self' data: maxcdn.bootstrapcdn.com",
+      'img-src': "'self' camo.githubusercontent.com www.google-analytics.com",
+      'connect-src': "'self' https://webrtc-translate-signalmaster.herokuapp.com wss://webrtc-translate-signalmaster.herokuapp.com",
+      'media-src': "'self' blob:",
+      'object-src': "'self'"
+    },
+
     GOOGLE_TRANSLATE_API_KEY: process.env.GOOGLE_TRANSLATE_API_KEY
   };
 

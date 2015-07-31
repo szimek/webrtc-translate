@@ -1,38 +1,10 @@
-/* global Shepherd */
-
 import Ember from 'ember';
 
-export default Ember.View.extend({
-    initializeWebRTC: function () {
-        var view = this;
-        var webrtc = this.get('controller.webrtc');
-        webrtc.config.localVideoEl = "local-video";
-        webrtc.config.remoteVideosEl = "remote-video";
+export default Ember.Service.extend({
+    init() {
+        this._super();
 
-        webrtc.startLocalVideo();
-
-        if (!window.localStorage.getItem('show-tour')) {
-            webrtc.on('readyToCall', function () {
-                window.localStorage.setItem('show-tour', 'nope');
-                view.startTour();
-            });
-        }
-    }.observes('controller.webrtc'),
-
-    scrollChatToBottom: function () {
-        var chatElement = this.$('.chat');
-
-        // Wait till the view is updated
-        if (chatElement) {
-            Ember.run.schedule('afterRender', function () {
-                chatElement.scrollTop(chatElement.prop('scrollHeight'));
-            });
-        }
-
-    }.observes('controller.model.@each'),
-
-    startTour: function () {
-        var tour = new Shepherd.Tour({
+        const tour = new window.Shepherd.Tour({
             defaults: {
                 classes: 'shepherd-theme-arrows shepherd-element-aint-no-river-wide-enough'
             }
@@ -98,6 +70,10 @@ export default Ember.View.extend({
             }]
         });
 
-        tour.start();
+        this.tour = tour;
+    },
+
+    start() {
+        this.tour.start();
     }
 });

@@ -1,6 +1,6 @@
 import Ember from 'ember';
 
-export default Ember.Object.extend(Ember.Evented, {
+export default Ember.Service.extend(Ember.Evented, {
     isActive: false,
     language: "en-GB",
 
