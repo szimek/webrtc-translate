@@ -24,7 +24,7 @@
   </div>
 </div>
 
-{{#message-list messages=model}}
+{{#message-list messages=messages}}
   {{#each messages as |message|}}
     <div class="message {{if message.isRemote 'remote' 'local'}}">
       <div class="content-wrapper">

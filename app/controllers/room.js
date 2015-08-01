@@ -136,7 +136,7 @@ export default Ember.Controller.extend({
                     if (!message) {
                         message = Message.create();
                         controller.set('message', message);
-                        controller.get('model').pushObject(message);
+                        controller.get('messages').pushObject(message);
                     }
 
                     for (var i = event.resultIndex; i < event.results.length; ++i) {
@@ -214,7 +214,7 @@ export default Ember.Controller.extend({
                         payload.isRemote = true;
                         payload.ifFinal = true;
                         var message = Message.create(payload);
-                        controller.get('model').pushObject(message);
+                        controller.get('messages').pushObject(message);
 
                         var lang = controller.get('localSpeechLanguage');
 
