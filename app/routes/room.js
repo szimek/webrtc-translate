@@ -17,7 +17,7 @@ export default Ember.Route.extend({
         return {
           roomId: params.room_id,
           messages: []
-        }
+        };
     },
 
     setupController: function (controller, model) {
