@@ -2,7 +2,21 @@ import Ember from 'ember';
 
 export default Ember.Service.extend(Ember.Evented, {
     isActive: false,
-    language: "en-GB",
+    languages: [
+        'en-GB',
+        'en-US',
+        'de-DE',
+        'es-ES',
+        'fr-FR',
+        'it-IT',
+        'hu-HU',
+        'nl-NL',
+        'pl-PL',
+        'pt-PT',
+        'sk-SK',
+        'sv-SE'
+    ],
+    language: 'en-GB',
 
     init: function () {
         this._super();

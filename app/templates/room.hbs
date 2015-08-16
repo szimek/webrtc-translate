@@ -2,7 +2,7 @@
   <div class="col-sm-3 text-center">
     <div class="language language-local">
       <div class="language-select">
-        {{language-select content=languages action=(action (mut localSpeechLanguage))}}
+        {{language-select content=recognition.languages action=(action (mut localSpeechLanguage))}}
         <div class="flag {{localFlagName}}"></div>
       </div>
     </div>
@@ -24,19 +24,4 @@
   </div>
 </div>
 
-{{#message-list messages=messages}}
-  {{#each messages as |message|}}
-    <div class="message {{if message.isRemote 'remote' 'local'}}">
-      <div class="content-wrapper">
-        <span class="content original-content {{if message.originalContent 'visible' 'hidden'}}">
-          {{{message.formattedOriginalContent}}}
-        </span>
-      </div>
-      <div class="content-wrapper">
-        <span class="content translated-content {{if message.translatedContent 'visible' 'hidden'}}">
-          {{{message.translatedContent}}}
-        </span>
-      </div>
-    </div>
-  {{/each}}
-{{/message-list}}
+{{message-list messages=messages}}

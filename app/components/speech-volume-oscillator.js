@@ -52,7 +52,7 @@ export default Ember.Component.extend({
         ctx.strokeStyle = "rgb(68, 133, 247)";
         ctx.stroke();
 
-        this.set('time', time + 1);
+        this.set('time', time + 0.7);
 
         var drawRAF = window.requestAnimationFrame(this.draw.bind(this));
         this.set('drawRAF', drawRAF);

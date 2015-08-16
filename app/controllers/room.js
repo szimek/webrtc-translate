@@ -10,45 +10,25 @@ export default Ember.Controller.extend({
     isRemoteVideo: false,
     isDataChannelOpened: false,
     tour: inject.service('tour'),
+
     recognition: inject.service('speech-recognition'),
     isSpeechRecognitionActive: alias('recognition.isActive'),
 
-    // TODO: move to speech recognition service
-    languages: [
-        'en-GB',
-        'en-US',
-        'de-DE',
-        'es-ES',
-        'fr-FR',
-        'it-IT',
-        'hu-HU',
-        'nl-NL',
-        'pl-PL',
-        'pt-PT',
-        'sk-SK',
-        'sv-SE'
-    ],
-
     remoteSpeechLanguage: 'de-DE',
-
     remoteTranslationLanguage: Ember.computed('remoteSpeechLanguage', function () {
         return this.get('remoteSpeechLanguage').split('-')[0];
     }),
-
     remoteFlagName: Ember.computed('remoteSpeechLanguage', function () {
         return this.get('remoteSpeechLanguage').split('-')[1].toUpperCase();
     }),
 
     localSpeechLanguage: 'en-GB',
-
     localTranslationLanguage: Ember.computed('localSpeechLanguage', function () {
         return this.get('localSpeechLanguage').split('-')[0];
     }),
-
     localFlagName: Ember.computed('localSpeechLanguage', function () {
         return this.get('localSpeechLanguage').split('-')[1].toUpperCase();
     }),
-
     localSpeechLanguageChanged: Ember.observer('localSpeechLanguage', function () {
         var language = this.get('localSpeechLanguage');
 
@@ -64,6 +44,7 @@ export default Ember.Controller.extend({
         }
     }),
 
+    // TODO: Cleanup init, initializeWebRTC and setup methods
     init: function () {
         this._super();
 
