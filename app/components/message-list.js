@@ -4,7 +4,7 @@ export default Ember.Component.extend({
     classNames: ['chat'],
     messages: [],
 
-    scrollChatToBottom: Ember.observer('messages.@each', function () {
+    scrollChatToBottom: Ember.observer('messages.[]', function () {
         const element = this.$();
 
         // Wait till the view is updated

@@ -3,7 +3,7 @@
     <div class="language language-local">
       <div class="language-select">
         {{language-select content=recognition.languages action=(action (mut localSpeechLanguage))}}
-        <div class="flag {{localFlagName}}"></div>
+        {{language-flag language=localSpeechLanguage}}
       </div>
     </div>
   </div>
@@ -18,7 +18,7 @@
     <div class="language language-remote">
       <div>
         {{remoteSpeechLanguage}}
-        <div class="flag {{remoteFlagName}}"></div>
+        {{language-flag language=remoteSpeechLanguage}}
       </div>
     </div>
   </div>
