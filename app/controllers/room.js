@@ -21,9 +21,6 @@ export default Ember.Controller.extend({
     localTranslationLanguage: Ember.computed('localSpeechLanguage', function () {
         return this.get('localSpeechLanguage').split('-')[0];
     }),
-    localFlagName: Ember.computed('localSpeechLanguage', function () {
-        return this.get('localSpeechLanguage').split('-')[1].toUpperCase();
-    }),
     localSpeechLanguageChanged: Ember.observer('localSpeechLanguage', function () {
         var language = this.get('localSpeechLanguage');
 
@@ -73,6 +70,70 @@ export default Ember.Controller.extend({
         var webrtc = this.get('webrtc');
         var recognition = this.get('recognition');
 
+        recognition.on('result', function onRecognitionResult(event) {
+            let interimTranscript = '';
+            let finalTranscript = '';
+            let message = controller.get('message');
+
+            // Create an empty message
+            if (!message) {
+                message = Message.create();
+                controller.set('message', message);
+                controller.get('messages').pushObject(message);
+            }
+
+            for (var i = event.resultIndex; i < event.results.length; ++i) {
+                const result = event.results[i];
+
+                if (result.isFinal) {
+                    finalTranscript = result[0].transcript;
+                    console.log("Final: ", finalTranscript);
+                    break;
+                } else {
+                    interimTranscript += result[0].transcript;
+                    console.log("Interim: ", interimTranscript);
+                }
+            }
+
+            message.set('originalContent', interimTranscript);
+
+            if (finalTranscript) {
+                let promise = null;
+
+                message.setProperties({
+                    originalContent: finalTranscript,
+                    isFinal: true
+                });
+
+                if (controller.get('isDataChannelOpened')) {
+                    promise = controller.translate({
+                        source: controller.get('localTranslationLanguage'),
+                        target: controller.get('remoteTranslationLanguage'),
+                        q: message.get('formattedOriginalContent')
+                    })
+                    .then(function (data) {
+                        if (data.error) {
+                            console.error(data.error.message);
+                        } else {
+                            const translation = data.data.translations[0].translatedText;
+                            message.set('translatedContent', translation);
+                            controller.sendMessage(message);
+                        }
+                    });
+                } else {
+                    promise = Ember.RSVP.resolve();
+                }
+
+                // Cleanup
+                promise.finally(function () {
+                    finalTranscript = '';
+                    controller.set('message', null);
+                });
+            }
+
+            console.log(event.results);
+        });
+
         webrtc.on('readyToCall', function () {
             webrtc.joinRoom(controller.get('roomId'));
         });
@@ -96,87 +157,19 @@ export default Ember.Controller.extend({
 
                 // Send local speech language to the other peer
                 controller.sendLanguage(controller.get('localSpeechLanguage'));
-
-                // var finalTranscript;
-                //
-                // recognition.on('start', function () {
-                //     finalTranscript = '';
-                // });
-
-                recognition.on('result', function (event) {
-                    var interimTranscript = '';
-                    var finalTranscript = '';
-                    var message = controller.get('message');
-
-                    // Create an empty message
-                    if (!message) {
-                        message = Message.create();
-                        controller.set('message', message);
-                        controller.get('messages').pushObject(message);
-                    }
-
-                    for (var i = event.resultIndex; i < event.results.length; ++i) {
-                        var result = event.results[i];
-
-                        if (result.isFinal) {
-                            finalTranscript = result[0].transcript;
-                            console.log("Final: ", finalTranscript);
-                            break;
-                        } else {
-                            interimTranscript += result[0].transcript;
-                            console.log("Interim: ", interimTranscript);
-                        }
-                    }
-
-                    message.set('originalContent', interimTranscript);
-
-                    if (finalTranscript) {
-                        message.setProperties({
-                            originalContent: finalTranscript,
-                            isFinal: true
-                        });
-
-                        controller.translate({
-                            source: controller.get('localTranslationLanguage'),
-                            target: controller.get('remoteTranslationLanguage'),
-                            q: message.get('formattedOriginalContent')
-                        })
-                        .done(function (data) {
-                            if (data.error) {
-                                console.error(data.error.message);
-                            } else {
-                                var translation = data.data.translations[0].translatedText;
-                                message.set('translatedContent', translation);
-                                controller.sendMessage(message);
-                            }
-                        })
-                        .always(function () {
-                            finalTranscript = '';
-                            controller.set('message', null);
-                        });
-                    }
-
-                    console.log(event.results);
-                });
             }
         });
 
         webrtc.on('channelClose', function (channel) {
             if (channel.label === 'simplewebrtc') {
-
-                // TODO: extract into function
                 controller.set('isDataChannelOpened', false);
-                recognition.off('result');
                 console.info('Data channel closed.', arguments);
             }
         });
 
         webrtc.on('channelError', function (channel) {
             if (channel.label === 'simplewebrtc') {
-
-                // TODO: extract into function
                 controller.set('isDataChannelOpened', false);
-                recognition.off('result');
                 console.info('Data channel error.', arguments);
             }
         });
@@ -247,12 +240,16 @@ export default Ember.Controller.extend({
     },
 
     translate: function (options) {
-        return Ember.$.getJSON('https://www.googleapis.com/language/translate/v2?callback=?', {
-            key: config.GOOGLE_TRANSLATE_API_KEY,
-            source: options.source,
-            target: options.target,
-            q:      options.q
-        });
+        // Wrap jQuery promise in RSVP promise
+        return new Ember.RSVP.Promise((resolve, reject) => {
+            Ember.$.getJSON('https://www.googleapis.com/language/translate/v2?callback=?', {
+                key: config.GOOGLE_TRANSLATE_API_KEY,
+                source: options.source,
+                target: options.target,
+                q:      options.q
+            })
+            .then(resolve, reject);
+        })
     },
 
     say: function (options) {
