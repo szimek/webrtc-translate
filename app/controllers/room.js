@@ -10,16 +10,11 @@ export default Ember.Controller.extend({
     isRemoteVideo: false,
     isDataChannelOpened: false,
     tour: inject.service('tour'),
-
     recognition: inject.service('speech-recognition'),
     isSpeechRecognitionActive: alias('recognition.isActive'),
-
     remoteSpeechLanguage: 'de-DE',
     remoteTranslationLanguage: Ember.computed('remoteSpeechLanguage', function () {
         return this.get('remoteSpeechLanguage').split('-')[0];
-    }),
-    remoteFlagName: Ember.computed('remoteSpeechLanguage', function () {
-        return this.get('remoteSpeechLanguage').split('-')[1].toUpperCase();
     }),
 
     localSpeechLanguage: 'en-GB',
