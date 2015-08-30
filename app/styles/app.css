@@ -65,7 +65,6 @@ video {
   margin: auto;
 }
 
-
 #remote-video {
   position: absolute;
   bottom: 0;
@@ -117,6 +116,10 @@ video {
   margin: 20px auto 0;
   padding: 0 70px;
   overflow-y: scroll;
+}
+
+.chat-form input {
+  width: 80%;
 }
 
 .flag {

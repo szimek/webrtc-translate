@@ -25,3 +25,9 @@
 </div>
 
 {{message-list messages=messages}}
+
+<hr>
+
+<form {{action "handleChatMessage" on="submit"}} class="chat-form text-center">
+  {{input value=chatMessage.originalContent placeholder="Type a message here"}}
+</form>

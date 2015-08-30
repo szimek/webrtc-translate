@@ -6,28 +6,33 @@ const inject = Ember.inject;
 const alias = Ember.computed.alias;
 
 export default Ember.Controller.extend({
-    roomId: null,
     isRemoteVideo: false,
     isDataChannelOpened: false,
+    speechMessage: Message.create(),
+    chatMessage: Message.create(),
+
     tour: inject.service('tour'),
+
     recognition: inject.service('speech-recognition'),
     isSpeechRecognitionActive: alias('recognition.isActive'),
-    remoteSpeechLanguage: 'de-DE',
-    remoteTranslationLanguage: Ember.computed('remoteSpeechLanguage', function () {
-        return this.get('remoteSpeechLanguage').split('-')[0];
-    }),
 
     localSpeechLanguage: 'en-GB',
     localTranslationLanguage: Ember.computed('localSpeechLanguage', function () {
         return this.get('localSpeechLanguage').split('-')[0];
     }),
     localSpeechLanguageChanged: Ember.observer('localSpeechLanguage', function () {
-        var language = this.get('localSpeechLanguage');
+        const language = this.get('localSpeechLanguage');
 
         this.sendLanguage(language);
         this.set('recognition.language', language);
     }),
 
+    remoteSpeechLanguage: 'de-DE',
+    remoteTranslationLanguage: Ember.computed('remoteSpeechLanguage', function () {
+        return this.get('remoteSpeechLanguage').split('-')[0];
+    }),
+
+    roomId: null,
     roomIdChanged: Ember.observer('roomId', function () {
         console.log('Room ID: ', this.get('roomId'));
 
@@ -36,53 +41,61 @@ export default Ember.Controller.extend({
         }
     }),
 
-    // TODO: Cleanup init, initializeWebRTC and setup methods
+    // TODO: Cleanup init and setup methods
     init: function () {
         this._super();
 
-        var controller = this;
+        const controller = this;
 
         // Initialize WebRTC
-        var webrtc = new window.SimpleWebRTC({
+        const webrtc = new window.SimpleWebRTC({
             enableDataChannels: true,
             url: 'https://webrtc-translate-signalmaster.herokuapp.com:443',
             debug: false
         });
 
-        webrtc.webrtc.on('localStream', function (stream) {
+        webrtc.webrtc.on('localStream', (stream) => {
             console.log('localStream: ', stream);
             controller.set('localMediaStream', stream);
         });
 
-        webrtc.webrtc.on('localStreamStopped', function () {
+        webrtc.webrtc.on('localStreamStopped', () => {
             console.log('localStreamStopped');
             controller.set('localMediaStream', null);
         });
 
-        this.set('webrtc', webrtc);
+        webrtc.config.localVideoEl = "local-video";
+        webrtc.config.remoteVideosEl = "remote-video";
 
-        // TODO move it somewhere
-        this.initializeWebRTC();
+        webrtc.startLocalVideo();
+
+        if (!window.localStorage.getItem('show-tour')) {
+            webrtc.on('readyToCall', () => {
+                window.localStorage.setItem('show-tour', 'nope');
+                controller.get('tour').start();
+            });
+        }
+
+        this.set('webrtc', webrtc);
     },
 
     setup: function () {
-        var controller = this;
-        var webrtc = this.get('webrtc');
-        var recognition = this.get('recognition');
+        const controller = this;
+        const webrtc = this.get('webrtc');
+        const recognition = this.get('recognition');
 
-        recognition.on('result', function onRecognitionResult(event) {
+        recognition.on('result', (event) => {
             let interimTranscript = '';
             let finalTranscript = '';
-            let message = controller.get('message');
+            let messages = controller.get('messages');
+            let message = controller.get('speechMessage');
 
-            // Create an empty message
-            if (!message) {
-                message = Message.create();
-                controller.set('message', message);
-                controller.get('messages').pushObject(message);
+            // TODO figure out a better way to add this message just once
+            if (!messages.contains(message)) {
+                messages.pushObject(message);
             }
 
-            for (var i = event.resultIndex; i < event.results.length; ++i) {
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
                 const result = event.results[i];
 
                 if (result.isFinal) {
@@ -98,58 +111,39 @@ export default Ember.Controller.extend({
             message.set('originalContent', interimTranscript);
 
             if (finalTranscript) {
-                let promise = null;
-
                 message.setProperties({
                     originalContent: finalTranscript,
                     isFinal: true
                 });
+            }
 
-                if (controller.get('isDataChannelOpened')) {
-                    promise = controller.translate({
-                        source: controller.get('localTranslationLanguage'),
-                        target: controller.get('remoteTranslationLanguage'),
-                        q: message.get('formattedOriginalContent')
-                    })
-                    .then(function (data) {
-                        if (data.error) {
-                            console.error(data.error.message);
-                        } else {
-                            const translation = data.data.translations[0].translatedText;
-                            message.set('translatedContent', translation);
-                            controller.sendMessage(message);
-                        }
-                    });
-                } else {
-                    promise = Ember.RSVP.resolve();
-                }
-
-                // Cleanup
-                promise.finally(function () {
+            if (message.get('isFinal')) {
+                controller.handleUntranslatedMessage(message)
+                .finally(() => {
                     finalTranscript = '';
-                    controller.set('message', null);
+                    controller.set('speechMessage', Message.create());
                 });
             }
 
             console.log(event.results);
         });
 
-        webrtc.on('readyToCall', function () {
+        webrtc.on('readyToCall', () => {
             webrtc.joinRoom(controller.get('roomId'));
         });
 
-        webrtc.on('joinedRoom', function () {
+        webrtc.on('joinedRoom', () => {
         });
 
-        webrtc.on('videoAdded', function () {
+        webrtc.on('videoAdded', () => {
             controller.set('isRemoteVideo', true);
         });
 
-        webrtc.on('videoRemoved', function () {
+        webrtc.on('videoRemoved', () => {
             controller.set('isRemoteVideo', false);
         });
 
-        webrtc.on('channelOpen', function (channel) {
+        webrtc.on('channelOpen', (channel) => {
             // Data channel with label 'simplewebrtc' is opened by SimpleWebRTC by default
             if (channel.label === 'simplewebrtc') {
                 controller.set('isDataChannelOpened', true);
@@ -160,34 +154,31 @@ export default Ember.Controller.extend({
             }
         });
 
-        webrtc.on('channelClose', function (channel) {
+        webrtc.on('channelClose', (channel) => {
             if (channel.label === 'simplewebrtc') {
                 controller.set('isDataChannelOpened', false);
                 console.info('Data channel closed.', arguments);
             }
         });
 
-        webrtc.on('channelError', function (channel) {
+        webrtc.on('channelError', (channel) => {
             if (channel.label === 'simplewebrtc') {
                 controller.set('isDataChannelOpened', false);
                 console.info('Data channel error.', arguments);
             }
         });
 
-        webrtc.on('channelMessage', function (peer, channelName, data) {
+        webrtc.on('channelMessage', (peer, channelName, data) => {
             if (channelName === 'simplewebrtc') {
-                var payload = data.payload;
+                const payload = data.payload;
 
                 switch (data.type) {
                     case 'message':
                         payload.isRemote = true;
                         payload.ifFinal = true;
-                        var message = Message.create(payload);
+
+                        const message = Message.create(payload);
                         controller.get('messages').pushObject(message);
-
-                        var lang = controller.get('localSpeechLanguage');
-
-                        console.log('Speaking with language: ', lang);
 
                         controller.say({
                             text: message.get('translatedContent'),
@@ -205,38 +196,31 @@ export default Ember.Controller.extend({
         });
     },
 
-    // TODO move it to the rest of webrtc initialization code
-    initializeWebRTC: function () {
-        const controller = this;
-        const webrtc = this.get('webrtc');
-        webrtc.config.localVideoEl = "local-video";
-        webrtc.config.remoteVideosEl = "remote-video";
+    handleUntranslatedMessage: function (message) {
+        let promise = null;
 
-        webrtc.startLocalVideo();
+        if (this.get('isDataChannelOpened')) {
+            promise = this.translate({
+                source: this.get('localTranslationLanguage'),
+                target: this.get('remoteTranslationLanguage'),
+                q: message.get('formattedOriginalContent')
+            })
+            .then((data) => {
+                if (data.error) {
+                    console.error(data.error.message);
+                } else {
+                    const translation = data.data.translations[0].translatedText;
+                    message.set('translatedContent', translation);
+                    this.sendMessage(message);
+                }
 
-        if (!window.localStorage.getItem('show-tour')) {
-            webrtc.on('readyToCall', function () {
-                window.localStorage.setItem('show-tour', 'nope');
-                controller.get('tour').start();
+                return message;
             });
+        } else {
+            promise = Ember.RSVP.resolve(message);
         }
-    },
 
-    sendMessage: function (message) {
-        var webrtc = this.get('webrtc');
-
-        webrtc.sendDirectlyToAll('simplewebrtc', 'message', {
-            originalContent: message.get('formattedOriginalContent'),
-            translatedContent: message.get('translatedContent')
-        });
-    },
-
-    sendLanguage: function (language) {
-        var webrtc = this.get('webrtc');
-
-        webrtc.sendDirectlyToAll('simplewebrtc', 'language', {
-            language: language
-        });
+        return promise;
     },
 
     translate: function (options) {
@@ -249,13 +233,47 @@ export default Ember.Controller.extend({
                 q:      options.q
             })
             .then(resolve, reject);
-        })
+        });
     },
 
     say: function (options) {
-        var msg = new window.SpeechSynthesisUtterance();
+        const msg = new window.SpeechSynthesisUtterance();
         msg.lang = options.lang;
         msg.text = options.text;
+
         window.speechSynthesis.speak(msg);
+    },
+
+    sendMessage: function (message) {
+        const webrtc = this.get('webrtc');
+
+        webrtc.sendDirectlyToAll('simplewebrtc', 'message', {
+            originalContent: message.get('formattedOriginalContent'),
+            translatedContent: message.get('translatedContent')
+        });
+    },
+
+    sendLanguage: function (language) {
+        const webrtc = this.get('webrtc');
+
+        webrtc.sendDirectlyToAll('simplewebrtc', 'language', {
+            language: language
+        });
+    },
+
+    actions: {
+        handleChatMessage() {
+            const message = this.get('chatMessage');
+
+            if (message.originalContent) {
+                message.set('isFinal', true);
+                this.get('messages').pushObject(message);
+
+                this.handleUntranslatedMessage(message)
+                    .then(() => {
+                        this.set('chatMessage', Message.create());
+                    });
+            }
+        }
     }
 });
