@@ -135,6 +135,16 @@ export default Ember.Controller.extend({
         webrtc.on('joinedRoom', () => {
         });
 
+        webrtc.on('error', (error) => {
+            switch (error) {
+                case 'full':
+                    console.warn('You can\'t join this room, because it\'s full.');
+                    break;
+                default:
+                    console.warn(error);
+            }
+        });
+
         webrtc.on('videoAdded', () => {
             controller.set('isRemoteVideo', true);
         });
