@@ -120,6 +120,7 @@ video {
 
 .chat-form input {
   width: 80%;
+  padding: 4px;
 }
 
 .flag {
