@@ -21,11 +21,6 @@ body {
   cursor: pointer;
 }
 
-video {
-  width: 100%;
-  height: auto;
-}
-
 .hidden {
   display: none;
 }
@@ -59,17 +54,35 @@ video {
   background-color: red;
 }
 
+video {
+  width: 100%;
+  height: auto;
+}
+
 .videos {
   position: relative;
   max-width: 360px;
   margin: auto;
 }
 
-#remote-video {
+.videos.remote-video-off #local-video {
+}
+
+.videos.remote-video-off #remote-video {
   position: absolute;
   bottom: 0;
   right: 0;
   width: 80px;
+}
+
+.videos.remote-video-on #local-video {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 80px;
+}
+
+.videos.remote-video-on #local-video {
 }
 
 .message {
