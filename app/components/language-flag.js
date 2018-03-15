@@ -8,7 +8,8 @@ export default Ember.Component.extend({
         const language = this.get('language');
 
         if (language) {
-            return language.split('-')[1].toUpperCase();
+            // Select the last segment from locale code, e.g. CN from cmn-Hans-CN, or PL from pl-PL
+            return language.split('-').slice(-1)[0].toUpperCase();
         }
     })
 });

@@ -10,7 +10,8 @@ export default Ember.Component.extend({
     isSpeechRecognitionActive: alias('recognition.isActive'),
 
     flagName: function () {
-        return this.get('language').split('-')[1].toUpperCase();
+        // Select the last segment from locale code, e.g. CN from cmn-Hans-CN, or PL from pl-PL
+        return this.get('language').split('-').slice(-1)[0].toUpperCase();
     }.property('language'),
 
     // TODO: make flag a separate component and toggle its

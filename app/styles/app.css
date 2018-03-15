@@ -195,6 +195,10 @@ video {
   background-image: url(/images/flags/SE.png);
 }
 
+.flag.CN {
+  background-image: url(/images/flags/CN.png);
+}
+
 .shepherd-element.shepherd-theme-arrows.shepherd-element-aint-no-river-wide-enough {
   max-width: 600px;
 }
