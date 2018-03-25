@@ -15,16 +15,20 @@ The previous version had speech recognition always on, but due to the way Web Sp
 You will need the following things properly installed on your computer.
 
 * [Git](http://git-scm.com/)
-* [Node.js](http://nodejs.org/) (with NPM) and [Bower](http://bower.io/)
+* [Node.js](http://nodejs.org/)
+* [Yarn](https://yarnpkg.com/en/)
+* [Bower](http://bower.io/)
 
 ## Installation
 
 * `git clone <repository-url>` this repository
 * change into the new directory
-* `npm install`
+
+* `yarn`
 * `bower install`
 
 ## Running / Development
 
-* `GOOGLE_TRANSLATE_API_KEY=XXXXXX ember server`
+* `* GOOGLE_TRANSLATE_API_KEY='xxx' yarn start --environment development`
 * Visit your app at [http://localhost:4200](http://localhost:4200).
+* If you're having with mic and camera access when accessing the app via HTTP, you can run `ssh -R 80:localhost:4200 serveo.net` and then access the app via provided URL using HTTPS.
