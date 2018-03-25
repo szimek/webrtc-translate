@@ -31,4 +31,4 @@ You will need the following things properly installed on your computer.
 
 * `* GOOGLE_TRANSLATE_API_KEY='xxx' yarn start --environment development`
 * Visit your app at [http://localhost:4200](http://localhost:4200).
-* If you're having with mic and camera access when accessing the app via HTTP, you can run `ssh -R 80:localhost:4200 serveo.net` and then access the app via provided URL using HTTPS.
+* If you're having issues with accessing your mic and camera via HTTP, you can run `ssh -R 80:localhost:4200 serveo.net` and then access the app via provided HTTPS URL.
